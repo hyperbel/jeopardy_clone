@@ -1,3 +1,17 @@
+url = "ws://localhost:8080/ws"
+w = new WebSocket(url);
+w.addEventListener('open', onopen )
+w.addEventListener('message', onmessage)
+
+function onmessage (msg) {
+  $("#output").append(`${(new Date())} <<< ${msg.data}\n`)
+}
+
+function onopen() {
+  w.send("ping")
+}
+
+
 var board = document.getElementById("board");
 var header = board.createTHead();
 var row = header.insertRow(0);
@@ -69,3 +83,5 @@ function handleBtnClick() {
     });
   });
 }
+
+

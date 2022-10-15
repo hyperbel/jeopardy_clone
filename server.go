@@ -25,9 +25,10 @@ func main() {
 	r.Static("/static/js", "static/js")
 	
 	r.GET("/", index)
-	r.GET("/ingame", ingame)
+	r.GET("/room/:id", ingame)
 	r.GET("/ws", wsh)
 	r.GET("/api/creategame", creategame)
+	r.GET("/api/joinroom/:id")
 	
 	r.Run()
 }
