@@ -5,7 +5,16 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"fmt"
+	"math/rand"
+	//"database/sql"
+	//"github.com/mattn/go-sqlite3"
 )
+func checkErr(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
+
 
 func main() {
 	r := gin.Default()
@@ -18,8 +27,17 @@ func main() {
 	r.GET("/", index)
 	r.GET("/ingame", ingame)
 	r.GET("/ws", wsh)
+	r.GET("/api/creategame", creategame)
 	
 	r.Run()
+}
+
+func creategame(c *gin.Context) {
+	id := rand.Intn(9999)
+	fmt.Println("[LOG] created game with ID: ", id)
+	//db, err := sql.Open("sqlite3", "./database.db")
+    //checkErr(err)
+	c.JSON(http.StatusOK, gin.H{"roomID": id})
 }
 
 func ingame(c *gin.Context) {

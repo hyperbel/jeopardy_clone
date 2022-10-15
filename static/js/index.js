@@ -18,7 +18,13 @@ function onopen() {
 }
 */
 function joingame() {
-  console.log("join gmae pressed")
   var name = document.getElementById("nameI").value;
-  console.log(name)
+  
+}
+
+function creategame() {
+  var name = document.getElementById("createName").value;
+  fetch('/api/creategame').then((res) => res.json()).then((data) => {
+    console.log(data);
+  })
 }
