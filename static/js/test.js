@@ -12,11 +12,14 @@ function onopen() {
 }
 
 
+const PLAYER_TYPE = window.sessionStorage.getItem("playerType");
 var board = document.getElementById("board");
 var header = board.createTHead();
 var row = header.insertRow(0);
 var boardfileElement = document.getElementById('fileUpload');
 boardfileElement.addEventListener('change', handleFiles, false);
+
+if (PLAYER_TYPE == "player") boardfileElement.hidden = true;
 
 function handleFiles() {
   const fileList = this.files;
