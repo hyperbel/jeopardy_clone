@@ -6,15 +6,9 @@ import (
 	"net/http"
 	"fmt"
 	"math/rand"
-	//"database/sql"
-	//"github.com/mattn/go-sqlite3"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 )
-func checkErr(err error) {
-    if err != nil {
-        panic(err)
-    }
-}
-
 
 func main() {
 	r := gin.Default()
@@ -27,18 +21,27 @@ func main() {
 	r.GET("/", index)
 	r.GET("/room/:id", ingame)
 	r.GET("/ws", wsh)
-	r.GET("/api/creategame", creategame)
-	r.GET("/api/joinroom/:id")
+	r.GET("/api/creategame/:host", creategame)
+	r.GET("/api/joinroom/:id", joinroom)
 	
 	r.Run()
 }
 
+func joinroom(c *gin.Context) {
+//	id := c.Param("id")
+//	db, err := sql.Open("sqlite3", "./database.db")
+//	checkErr(err)
+}
+
 func creategame(c *gin.Context) {
+	host := c.Param("host")
 	id := rand.Intn(9999)
 	fmt.Println("[LOG] created game with ID: ", id)
-	//db, err := sql.Open("sqlite3", "./database.db")
-    //checkErr(err)
-	c.JSON(http.StatusOK, gin.H{"roomID": id})
+	db, err := sql.Open("sqlite3", "./database.db")
+    checkErr(err)
+	res, err := db.Exec("INSERT INTO Games VALUES(?,?);",id,host) 
+	checkErr(err)
+	c.JSON(http.StatusOK, gin.H{"roomID": id, "res": res})
 }
 
 func ingame(c *gin.Context) {
@@ -76,4 +79,10 @@ func wshandler(w http.ResponseWriter, r *http.Request) {
 		}
 		conn.WriteMessage(t, msg)
 	}
+}
+
+func checkErr(err error) {
+    if err != nil {
+        panic(err)
+    }
 }

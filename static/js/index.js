@@ -6,7 +6,7 @@ function joingame() {
 
 function creategame() {
   var name = document.getElementById("createName").value;
-  fetch('/api/creategame').then((res) => res.json()).then((data) => {
+  fetch(`/api/creategame/${name}`).then((res) => res.json()).then((data) => {
     console.log(data);
     sessionStorage.setItem("roomID", data["roomID"]);
     sessionStorage.setItem("playerType", "host")
