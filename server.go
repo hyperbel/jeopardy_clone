@@ -22,15 +22,21 @@ func main() {
 	r.GET("/room/:id", ingame)
 	r.GET("/ws", wsh)
 	r.GET("/api/creategame/:host", creategame)
-	r.GET("/api/joinroom/:id", joinroom)
+	r.GET("/api/joinroom/:id/:name", joinroom)
 	
 	r.Run()
 }
 
 func joinroom(c *gin.Context) {
-//	id := c.Param("id")
-//	db, err := sql.Open("sqlite3", "./database.db")
-//	checkErr(err)
+	id := c.Param("id")
+	na := c.Param("name")
+	pid := rand.Intn(99999)
+	db, err := sql.Open("sqlite3", "./database.db")
+	checkErr(err)
+	res, err := db.Exec("INSERT INTO Players VALUES(?,?);",pid,na) 
+	checkErr(err)
+	fmt.Println(res)
+	c.JSON(http.StatusOK, gin.H{"res": res, "pID": pid})
 }
 
 func creategame(c *gin.Context) {
