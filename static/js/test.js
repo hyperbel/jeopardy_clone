@@ -78,7 +78,6 @@ function handleBtnClick() {
             $(this).dialog("close");
           }
         }
-
       ]
     });
   });
