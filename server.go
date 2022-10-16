@@ -1,29 +1,29 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"net/http"
-	"fmt"
-	"math/rand"
-	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+	"math/rand"
+	"net/http"
 )
 
 func main() {
 	r := gin.Default()
 
 	r.Use(gin.Logger())
-	
+
 	r.LoadHTMLGlob("static/html/*")
 	r.Static("/static/js", "static/js")
-	
+
 	r.GET("/", index)
 	r.GET("/room/:id", ingame)
 	r.GET("/ws", wsh)
 	r.GET("/api/creategame/:host", creategame)
 	r.GET("/api/joinroom/:id/:name", joinroom)
-	
+
 	r.Run()
 }
 
@@ -33,7 +33,7 @@ func joinroom(c *gin.Context) {
 	pid := rand.Intn(99999)
 	db, err := sql.Open("sqlite3", "./database.db")
 	checkErr(err)
-	res, err := db.Exec("INSERT INTO Players VALUES(?,?);",pid,na) 
+	res, err := db.Exec("INSERT INTO Players VALUES(?, ?,?);", pid, id, na)
 	checkErr(err)
 	fmt.Println(res)
 	c.JSON(http.StatusOK, gin.H{"res": res, "pID": pid})
@@ -44,8 +44,8 @@ func creategame(c *gin.Context) {
 	id := rand.Intn(9999)
 	fmt.Println("[LOG] created game with ID: ", id)
 	db, err := sql.Open("sqlite3", "./database.db")
-    checkErr(err)
-	res, err := db.Exec("INSERT INTO Games VALUES(?,?);",id,host) 
+	checkErr(err)
+	res, err := db.Exec("INSERT INTO Games VALUES(?,?);", id, host)
 	checkErr(err)
 	c.JSON(http.StatusOK, gin.H{"roomID": id, "res": res})
 }
@@ -62,13 +62,13 @@ func wsh(c *gin.Context) {
 
 func index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"content":"index page",
+		"content": "index page",
 	})
 }
 
-var wsupgrader = websocket.Upgrader {
-	ReadBufferSize:		1024,
-	WriteBufferSize:	1024,
+var wsupgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
 func wshandler(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +77,7 @@ func wshandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed to set websocket upgrade: %+v", err)
 		return
 	}
-	
+
 	for {
 		t, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -88,7 +88,7 @@ func wshandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkErr(err error) {
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 }
