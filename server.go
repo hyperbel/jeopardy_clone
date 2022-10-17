@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
 	"math/rand"
 	"net/http"
@@ -20,7 +19,6 @@ func main() {
 
 	r.GET("/", index)
 	r.GET("/room/:id", ingame)
-	r.GET("/ws", wsh)
 	r.GET("/api/creategame/:host", creategame)
 	r.GET("/api/joinroom/:id/:name", joinroom)
 
@@ -56,35 +54,10 @@ func ingame(c *gin.Context) {
 	})
 }
 
-func wsh(c *gin.Context) {
-	wshandler(c.Writer, c.Request)
-}
-
 func index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"content": "index page",
 	})
-}
-
-var wsupgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func wshandler(w http.ResponseWriter, r *http.Request) {
-	conn, err := wsupgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Println("Failed to set websocket upgrade: %+v", err)
-		return
-	}
-
-	for {
-		t, msg, err := conn.ReadMessage()
-		if err != nil {
-			break
-		}
-		conn.WriteMessage(t, msg)
-	}
 }
 
 func checkErr(err error) {

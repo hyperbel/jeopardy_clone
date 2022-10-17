@@ -1,4 +1,3 @@
-
 function joingame() {
   var name = document.getElementById("nameI").value;
   var gaid = document.getElementById("gameI").value;
@@ -20,3 +19,5 @@ function creategame() {
     window.location.href = `/room/${data["roomID"]}`
   })
 }
+
+var ws = new WebSocket("ws://localhost:8080/")
