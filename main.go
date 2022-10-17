@@ -7,12 +7,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"math/rand"
 	"net/http"
-	"github.com/olahol/melody"
 )
 
 func main() {
 	r := gin.Default()
-	m := melody.New()
 
 	r.Use(gin.Logger())
 
@@ -23,17 +21,9 @@ func main() {
 	r.GET("/room/:id", ingame)
 	r.GET("/api/creategame/:host", creategame)
 	r.GET("/api/joinroom/:id/:name", joinroom)
-	r.GET("/ws", func (c *gin.Context) {
-		m.HandleRequest(c.Writer, c.Request)
-	})
-	
-	m.HandleMessage(func(s *melody.Session, msg []byte) {
-		m.Broadcast(msg)
-	})
 
 	r.Run()
 }
-
 
 func joinroom(c *gin.Context) {
 	id := c.Param("id")
@@ -44,7 +34,7 @@ func joinroom(c *gin.Context) {
 	res, err := db.Exec("INSERT INTO Players VALUES(?, ?,?);", pid, id, na)
 	checkErr(err)
 	fmt.Println(res)
-	c.JSON(http.StatusOK, gin.H{"res": res, "pID": pid, "name": na})
+	c.JSON(http.StatusOK, gin.H{"res": res, "pID": pid})
 }
 
 func creategame(c *gin.Context) {
