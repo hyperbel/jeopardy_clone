@@ -1,2 +1,1 @@
 # jeopardy_clone
-* test
