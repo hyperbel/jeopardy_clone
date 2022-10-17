@@ -1,0 +1,9 @@
+language: go
+sudo: required
+go:
+- 1.x
+- master
+install:
+  - go get github.com/gorilla/websocket
+script:
+  - go test
