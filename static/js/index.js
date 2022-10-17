@@ -20,4 +20,18 @@ function creategame() {
   })
 }
 
-var ws = new WebSocket("ws://localhost:8080/")
+var ws = new WebSocket("ws://localhost:8080/ws")
+
+ws.addEventListener('open', (e) => {
+  var name = sessionStorage.getItem("playerName");
+  if (name != null)
+    ws.send({
+      "playerName": name,
+      "playerId": 
+    })
+})
+
+ws.addEventListener('message', (e) => {
+  console.log(e.data)
+})
+
