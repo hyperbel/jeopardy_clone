@@ -28,7 +28,7 @@ func main() {
 	})
 	
 	m.HandleMessage(func (s *melody.Session, msg []byte) {
-		m.BroadCast(msg)
+		m.Broadcast(msg)
 	})
 
 	r.Run()
