@@ -28,6 +28,7 @@ func main() {
 	})
 	
 	m.HandleMessage(func (s *melody.Session, msg []byte) {
+		fmt.Println(string(msg[:]))
 		m.Broadcast(msg)
 	})
 
