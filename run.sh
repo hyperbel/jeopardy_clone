@@ -1,6 +1,5 @@
 #!/bin/sh
 
-rm database.db
 pacman -Qs go >> /dev/null
 if [ $? -eq 1 ]
 then
@@ -14,6 +13,11 @@ then
   sudo pacman -Sy go sqlite3
 fi
 
+if [ -f database.db ]
+then
+  cat restart.sql | sqlite3 database.db
+else
+  cat first.sql | sqlite3 database.db
+fi
 go get -u
-cat database.sql | sqlite3 database.db
 go run .
