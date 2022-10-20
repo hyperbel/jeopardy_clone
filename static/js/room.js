@@ -1,20 +1,27 @@
 var ws = new WebSocket("ws://localhost:8080/ws")  
 var peers = [];
+const PLAYER_TYPE = sessionStorage.getItem("playerType");
+const GAID = sessionStorage.getItem("roomID");
 
 ws.addEventListener('open', (e) => {
   var name = sessionStorage.getItem("playerName");
   if (name != null)
     ws.send(JSON.stringify({
       "sendType": "join_game",
-      "playerName": name
+      "gameID": GAID,
+      "message": {
+        "playerName": name
     }))
 })
 
-ws.addEventListener('message', (e) => {
-  console.log(JSON.parse(e.data))
-}) 
+var p_c = 0;// player_count
+var t = document.getElementById("playerT")
+var h = t.createTHead();
+var r = h.insertRow(0)
 
-const PLAYER_TYPE = window.sessionStorage.getItem("playerType");
+
+
+
 var board = document.getElementById("board");
 var header = board.createTHead();
 var row = header.insertRow(0);
@@ -88,4 +95,30 @@ function handleBtnClick() {
   });
 }
 
+function peer_joined(d) {
+    r.insertCell(p_c).innerHTML = `${d["playerName"]}`
+    peers.push(d["playerName"])
+    p_c++;
+    if (PLAYER_TYPE == "host") 
+      ws.send(JSON.stringify({
+          "sendType": "response_to_join",
+          "gameID": GAID,
+          "message": {
+            "peers": peers
+          }
+        }
+      ))
+  }
+}
 
+ws.addEventListener('message', (e) => {
+  var d = JSON.parse(e.data)
+  if (d["gameID"] != GAID) return;
+
+  var s = d["sendType"]
+  if (s == "join_game" && d["gameID"] == GAID)
+    peer_joined(d);
+  if (s == "response_to_join" && d["gameID"] == GAID) {
+    peers = d["message"]["peers"]
+  }
+}) 
