@@ -62,10 +62,10 @@ github.com/pelletier/go-toml/v2/internal/tracker
 # github.com/ugorji/go/codec v1.2.7
 ## explicit; go 1.11
 github.com/ugorji/go/codec
-# golang.org/x/crypto v0.0.0-20221012134737-56aed061732a
+# golang.org/x/crypto v0.1.0
 ## explicit; go 1.17
 golang.org/x/crypto/sha3
-# golang.org/x/net v0.0.0-20221019024206-cb67ada4b0ad
+# golang.org/x/net v0.1.0
 ## explicit; go 1.17
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
