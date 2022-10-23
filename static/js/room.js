@@ -97,8 +97,8 @@ function handleBtnClick() {
 }
 
 function peer_joined(d) {
-    r.insertCell(p_c).innerHTML = `${d["playerName"]}`
-    peers.push(d["message"]["playerName"])
+    console.log(d["message"]["playerName"][0])
+    r.insertCell(p_c).innerHTML = `${d["message"]["playerName"][0]}`
     p_c++;
     if (PLAYER_TYPE == "host") 
       ws.send(JSON.stringify({
@@ -109,6 +109,7 @@ function peer_joined(d) {
           }
         }
     ))
+    peers.push(d["message"]["playerName"])
 }
 
 
@@ -119,8 +120,10 @@ ws.addEventListener('message', (e) => {
   var s = d["sendType"];
   if (s == "join_game" && d["gameID"].value == GAID.value)
     peer_joined(d);
-  if (s == "response_to_join" && d["gameID"].value == GAID) {
+  if (s == "response_to_join") {// && d["gameID"].value == GAID) {
     console.log(d["message"]["peers"])
     peers = d["message"]["peers"]
+    console.log(peers)
+
   }
 }) 
