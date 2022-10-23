@@ -20,9 +20,6 @@ var t = document.getElementById("playerT")
 var h = t.createTHead();
 var r = h.insertRow(0)
 
-
-
-
 var board = document.getElementById("board");
 var header = board.createTHead();
 var row = header.insertRow(0);
@@ -97,10 +94,10 @@ function handleBtnClick() {
 }
 
 function peer_joined(d) {
-    console.log(d["message"]["playerName"][0])
-    r.insertCell(p_c).innerHTML = `${d["message"]["playerName"][0]}`
+    r.insertCell(p_c).innerHTML = `${d["message"]["playerName"]}`
     p_c++;
-    if (PLAYER_TYPE == "host") 
+    console.log(peers)
+    if (PLAYER_TYPE.value == "host") 
       ws.send(JSON.stringify({
           "sendType": "response_to_join",
           "gameID": GAID,
@@ -118,12 +115,18 @@ ws.addEventListener('message', (e) => {
   if (d["gameID"] != GAID) return;
 
   var s = d["sendType"];
+  console.log(s)
   if (s == "join_game" && d["gameID"].value == GAID.value)
     peer_joined(d);
   if (s == "response_to_join") {// && d["gameID"].value == GAID) {
-    console.log(d["message"]["peers"])
+    console.log(d["gameID"])
+    console.log(GAID)
     peers = d["message"]["peers"]
-    console.log(peers)
-
+    peers.forEach((el) => {
+      pc++;
+      if (sessionStorage.getItem("playerName").value == el.value)
+        r.insertCell(p_c).innerHTML = `${el} <b>(me)</b>`
+      r.insertCell(p_c).innerHTML = `${el}`
+    })
   }
 }) 
