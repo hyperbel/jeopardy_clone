@@ -13,6 +13,11 @@ ws.addEventListener('open', (e) => {
         "playerName": name
       }
     }));
+  if (sessionStorage.getItem("playerType") == "host")
+    ws.send(JSON.stringify({
+      "sendType": "host_reload",
+      "gameID", GAID,
+    }))
 })
 
 var p_c = 0;// player_count
@@ -26,7 +31,7 @@ var row = header.insertRow(0);
 var boardfileElement = document.getElementById('fileUpload');
 boardfileElement.addEventListener('change', handleFiles, false);
 
-if (PLAYER_TYPE.value == "player") boardfileElement.hidden = true;
+if (PLAYER_TYPE == "player") boardfileElement.hidden = true;
 
 function handleFiles() {
   const fileList = this.files;
@@ -94,12 +99,24 @@ function handleBtnClick() {
 }
 
 function peer_joined(d) {
-    if (PLAYER_TYPE == "host") 
+    if (PLAYER_TYPE == "host")  {
       r.insertCell(p_c).innerHTML = `${d["message"]["playerName"]}`
-    p_c++;
-    peers.push(d["message"]["playerName"])
+      p_c++;
+    }
 }
 
+function host_reload(d) {
+  if (PLAYER_TYPE == "host")
+    alert("this shouldn't happen")
+  if (GAID == d["gameID"])
+    ws.send(JSON.stringify({
+      "sendType": "response_host_reload",
+      "gameID": GAID,
+      "message": {
+        "playerName": sessionStorage.getItem("playerName")
+      }
+    }))
+}
 
 ws.addEventListener('message', (e) => {
   var d = JSON.parse(e.data)
@@ -108,5 +125,8 @@ ws.addEventListener('message', (e) => {
   var s = d["sendType"];
   if (s == "join_game")
     peer_joined(d);
-  }
-) 
+  if (s == "host_reload")
+    host_reload(d)
+  if (s == "response_host_reload")
+    peer_joined(d)
+}) 
