@@ -96,16 +96,6 @@ function handleBtnClick() {
 function peer_joined(d) {
     r.insertCell(p_c).innerHTML = `${d["message"]["playerName"]}`
     p_c++;
-    console.log(peers)
-    if (PLAYER_TYPE.value == "host") 
-      ws.send(JSON.stringify({
-          "sendType": "response_to_join",
-          "gameID": GAID,
-          "message": {
-            "peers": peers
-          }
-        }
-    ))
     peers.push(d["message"]["playerName"])
 }
 
@@ -115,18 +105,7 @@ ws.addEventListener('message', (e) => {
   if (d["gameID"] != GAID) return;
 
   var s = d["sendType"];
-  console.log(s)
-  if (s == "join_game" && d["gameID"].value == GAID.value)
+  if (s == "join_game")
     peer_joined(d);
-  if (s == "response_to_join") {// && d["gameID"].value == GAID) {
-    console.log(d["gameID"])
-    console.log(GAID)
-    peers = d["message"]["peers"]
-    peers.forEach((el) => {
-      pc++;
-      if (sessionStorage.getItem("playerName").value == el.value)
-        r.insertCell(p_c).innerHTML = `${el} <b>(me)</b>`
-      r.insertCell(p_c).innerHTML = `${el}`
-    })
   }
 }) 
