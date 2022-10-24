@@ -26,7 +26,7 @@ var row = header.insertRow(0);
 var boardfileElement = document.getElementById('fileUpload');
 boardfileElement.addEventListener('change', handleFiles, false);
 
-if (PLAYER_TYPE == "player") boardfileElement.hidden = true;
+if (PLAYER_TYPE.value == "player") boardfileElement.hidden = true;
 
 function handleFiles() {
   const fileList = this.files;
@@ -94,7 +94,8 @@ function handleBtnClick() {
 }
 
 function peer_joined(d) {
-    r.insertCell(p_c).innerHTML = `${d["message"]["playerName"]}`
+    if (PLAYER_TYPE == "host") 
+      r.insertCell(p_c).innerHTML = `${d["message"]["playerName"]}`
     p_c++;
     peers.push(d["message"]["playerName"])
 }
@@ -108,4 +109,4 @@ ws.addEventListener('message', (e) => {
   if (s == "join_game")
     peer_joined(d);
   }
-}) 
+) 
