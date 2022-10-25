@@ -16,7 +16,7 @@ ws.addEventListener('open', (e) => {
   if (sessionStorage.getItem("playerType") == "host")
     ws.send(JSON.stringify({
       "sendType": "host_reload",
-      "gameID", GAID,
+      "gameID": GAID
     }))
 })
 
@@ -29,9 +29,12 @@ var board = document.getElementById("board");
 var header = board.createTHead();
 var row = header.insertRow(0);
 var boardfileElement = document.getElementById('fileUpload');
+boardfileElement.hidden = true;
 boardfileElement.addEventListener('change', handleFiles, false);
 
-if (PLAYER_TYPE == "player") boardfileElement.hidden = true;
+console.log(PLAYER_TYPE)
+console.log(sessionStorage.getItem("playerType"))
+if (PLAYER_TYPE != "player") boardfileElement.hidden = false;
 
 function handleFiles() {
   const fileList = this.files;
@@ -41,6 +44,11 @@ function handleFiles() {
   reader.onload = function() {
     var b = JSON.parse(reader.result)
     handleBoard(b)
+    ws.send(JSON.stringify({
+      "sendType": "board",
+      "gameID": GAID,
+      "message": b
+    }))
   }
   reader.readAsText(boardf)
 }
@@ -129,4 +137,6 @@ ws.addEventListener('message', (e) => {
     host_reload(d)
   if (s == "response_host_reload")
     peer_joined(d)
+  if (s == "board")
+    handleBoard(d["message"])
 }) 
